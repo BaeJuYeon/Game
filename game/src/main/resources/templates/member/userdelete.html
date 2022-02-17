@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style>  
+    section.userdelete {
+        width:290px;
+        margin:auto;
+        height:1000px;
+         margin-top:100px;
+        border:1px solid red;
+    }
+     ul {
+        list-style-type:none;
+        font-size:12pt;
+        /*border:1px solid blue;*/
+        margin-left:30px;
+        margin:0;
+        padding:0;
+    }
+    label {
+        background:yellow;
+        display:inline-block;
+        text-align:center;
+        border-radius:5px;  
+        margin-right:10px;
+        margin-bottom:0;
+        font-weight:bold;
+        font-size:10pt;
+        color:gray;
+    }
+    li  { 
+        clear:left; 
+        /*border:1px solid red;*/
+        overflow:hidden;
+    }   
+    .input1, .email {
+        margin-bottom: 15px;
+    }
+    span {
+        margin-left:120px;
+    }
+    .input1 {
+        margin-bottom: 15px;
+        border-radius:5px;
+        border:1px solid lightgray;
+        width:250px;
+        padding:13px;
+        padding-left:15px;
+        font-size:14px;
+    }
+    .btn_userdelete {
+        width:283px;
+        color:white;
+        background:black;
+        border-radius:5px;
+        padding:10px 15px;
+        font-size:13px;
+        margin-top:20px;
+        border: 1px solid black;
+        cursor:pointer;
+    }
+    img {
+    margin-left:100px;
+    
+   }
+</style>
+</head>
+<body>
+<section class="userdelete">
+    <img src="../image/로고.PNG">
+    <form name="idfindForm" th:action="@{/member/userdelete}" th:object="${member}" method="post" onsubmit="return userDeleteCheck()">
+     <th:block layout:fragment="content">
+      <ul>
+             <li>
+                 <input type="text" name="memName" class="input1" id="name" onblur="textCheck_name(this)" autocomplete="off" >
+                 <div id="namemsg"></div>
+             </li>
+             <li>
+                <input type="password" name="memPass" class="input1" id="pass" onblur="textCheck_pass(this)"
+                autocomplete="off">
+                <div id="passmsg"></div>
+             </li>
+             <li>
+                <span>탈퇴에 동의합니다.</span>
+                <input type="checkbox">
+             </li>
+             <li>
+                <button type="submit" class="btn_userdelete">회원탈퇴</button> <!--  onclick="idfindCheck()" -->
+             </li>
+      </ul>
+     
+     
+      </th:block>
+      </form>
+ </section>
+</body>
+</html>

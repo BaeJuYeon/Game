@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+<script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+<style>
+    body {
+        background: rgb(94,94,94);
+    }
+    section.login {
+        width:280px;
+        margin:auto;
+        height:1000px;
+        border:1px solid red;
+        margin-top:100px;
+    }
+    .input1 {
+        margin-bottom: 15px;
+        border-radius:5px;
+        border:1px solid lightgray;
+        width:250px;
+        padding:13px;
+        padding-left:15px;
+        font-size:14px;
+    }
+     .btn_join {
+        width:283px;
+        color:white;
+        background:black;
+        border-radius:5px;
+        padding:10px 15px;
+        font-size:13px;
+        border: 1px solid black;
+        cursor:pointer;
+    }
+     .btn_kakaologin {
+        width:283px;
+        color:black;
+        background:rgb(255,224,0);
+        border-radius:5px;
+        padding:10px 15px;
+        font-size:13px;
+        font-weight:bold;
+        border: 1px solid rgb(255,224,0);
+        margin-bottom:5px;
+        cursor:pointer;
+    }
+     .btn_kakaologout {
+        width:283px;
+        color:black;
+        background:rgb(255,224,0);
+        border-radius:5px;
+        padding:10px 15px;
+        font-size:13px;
+        font-weight:bold;
+        border: 1px solid rgb(255,224,0);
+        cursor:pointer;
+    }
+    .s {
+        margin-top:10px;
+    }
+    a.s1 {
+        text-decoration:none;
+        color:white;
+        font-size:10px;
+        margin-left:25px;
+    }
+    img.kakao {
+        margin-left:35px;
+        margin-bottom:5px;
+    }
+    hr {
+        width:280px;
+        margin-top:20px;
+        margin-bottom:40px;
+        margin-left:-2px;
+    }
+    ul {
+        list-style-type:none;
+        font-size:12pt;
+        /*border:1px solid blue;*/
+        margin-left:30px;
+        margin:0;
+        padding:0;
+    }
+    img {
+    margin-left:95px;
+    
+   }
+   #idmsg, #passmsg {
+    font-size:5px;
+    font-weight:bold;
+    margin-top:-5px;
+   }
+</style>
+<script src="../js/login.js"></script>
+</head>
+<body>
+<section class="login">
+<img src="../image/로고.PNG">
+	<div class="form-group">
+	   <form name="loginForm" th:action="@{/member/login}" th:object="${member}" method="post" onsubmit="return loginCheck()">
+	   <!--  
+		   <label for="secretYn" class="col-sm-2 control-label">로그인</label>
+	-->
+	        <div class="col-sm-10" style="margin-top: 10px;">
+	            <input type="text" id="loginId" name="memId" class="input1" autocomplete="off" onblur="textCheck_id(this)"/>
+	           <div id="idmsg"></div>
+	        </div>
+	       <!--  
+	        <label for="secretYn" class="col-sm-2 control-label">비밀번호</label>
+	        -->
+	        <div class="col-sm-10" style="margin-top: 10px;">
+	            <input type="password" id="loginPass" class="input1" name="memPass" onblur="textCheck_pass(this)"
+                autocomplete="off" />
+	           <div id="passmsg"></div>
+	        </div>
+	        <div class="col-sm-10" style="margin-top: 10px;">
+	            <button type="submit" class="btn_join">로그인</button>
+	        </div>
+	        <div class="s">
+	           <span><a href="" class="s1">아이디 찾기</a></span>
+	           <span><a href="" class="s1">비밀번호 찾기</a></span>
+	           <span><a href="" class="s1">회원가입</a></span>
+	        </div>
+	        <hr>
+	   </form>
+    </div>
+    <div>
+    </div>
+  <ul>
+    <li onclick="kakaoLogin();">
+      <a href="javascript:void(0)">
+      <!--
+          <img
+		    src="//k.kakaocdn.net/14/dn/btroDszwNrM/I6efHub1SN5KCJqLm1Ovx1/o.jpg"
+		    width="222"
+		    alt="카카오 로그인 버튼"
+		    class="kakao"
+		  />
+	-->
+		  <button type="submit" class="btn_kakaologin">카카오 로그인</button>
+      </a>
+    </li>
+    <li onclick="kakaoLogout();">
+      <a href="javascript:void(0)">
+      <!--  
+          <img
+            src="//k.kakaocdn.net/14/dn/btroDszwNrM/I6efHub1SN5KCJqLm1Ovx1/o.jpg"
+            width="222"
+            alt="카카오 로그아웃 버튼"
+            class="kakao"
+          />
+       -->
+          <button type="submit" class="btn_kakaologout">카카오 로그아웃</button>
+      </a>
+    </li>
+</ul>
+</section>
+<!-- 카카오 스크립트 -->
+<script>
+Kakao.init('6949494c77d9cbaa21c5000b475c708a'); //발급받은 키 중 javascript키를 사용해준다.
+console.log(Kakao.isInitialized()); // sdk초기화여부판단
+//카카오로그인
+function kakaoLogin() {
+    Kakao.Auth.login({
+      success: function (authObj) { //: 로그인이 성공할 경우 사용자 토큰을 받을 콜백 함수
+        Kakao.API.request({
+          url: '/v2/user/me',
+          success: function (response) {
+        	  alert(JSON.stringify(response)); 
+        	  alert(JSON.stringify(authObj));
+        	  console.log(response.id);
+        	  console.log(response.kaccount_email);
+        	  console.log(authObj.access_token);
+//         	  console.log(response.properties['nickname']);
+        	  console.log(authObj.access_token);
+              console.log('login response: '+response)
+          },
+          fail: function (error) {
+            console.log(error)
+          },
+        })
+      },
+      fail: function (error) {
+        console.log(error)
+      },
+    })
+  }
+//카카오로그아웃  
+function kakaoLogout() {
+    if (Kakao.Auth.getAccessToken()) {
+      Kakao.API.request({
+        url: '/v1/user/unlink',
+        success: function (response) {
+            console.log('logout response: '+response)
+        },
+        fail: function (error) {
+          console.log(error)
+        },
+      })
+      Kakao.Auth.setAccessToken(undefined)
+    }
+  }  
+</script>
+	
+</body>
+</html>

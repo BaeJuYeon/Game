@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>The page is a write page</title>
+    </head>
+    <body>
+    
+	        <div class="table-responsive clearfix">
+	            <table class="table table-hover">
+	                <thead>
+	                    <tr>
+	                        <th>번호</th>
+	                        <th>제목</th>
+	                        <th>작성자</th>
+	                        <th>등록일</th>
+	                        <th>조회수</th>
+	                    </tr>
+	                </thead>
+	                <tbody>
+	                    <tr th:if="${not #lists.isEmpty( boardList )}" th:each="row : ${boardList}">
+	                        <td scope="row" th:text="${row.rno}"></td>
+	                        <td class="text-left">
+	                            <a th:href="@{/board/freeboard/view(boardNum=${row.boardNum}, memId=${row.memId}, boardType=${row.boardType})}" th:text="${row.boardTitle} + 'zz'"></a>
+	                        </td>
+	                        <td th:text="${row.memNick}"></td>
+	                        <td th:text="${row.boardDate}"></td>
+	                        <!-- 첫 번째 파라미터는 '?'로 연결하고, 두 번째부터는 '&'로 연결하는데요, 타임리프는 URI 뒤에 ?대신 괄호를, & 대신 ,(콤마)를 사용 -->
+	                        <td th:text="${row.boardHit}"></td>
+	                        
+	                    </tr>
+	                    <tr th:unless="${not #lists.isEmpty( boardList )}">
+	                        <td colspan="5">조회된 결과가 없습니다.</td>
+	                    </tr>
+	                </tbody>
+	            </table>
+	
+	            <div class="btn_wrap text-right">
+	                <a th:href="@{/board/freeboard/write(boardType=1)}" class="btn btn-primary waves-effect waves-light">Write</a>
+	            </div>
+	        </div>
+	   </body>
+</html>

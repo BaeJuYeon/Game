@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.game.mapper.BoardMapper">
+
+    <sql id="BoardColumns">
+         board_num, board_type, board_title, board_content, mem_id, 
+    board_date, board_update_id, board_update_date, board_hit, board_delete
+        
+    </sql>
+     <sql id="CommentColumns">
+         comm_num, board_num, mem_id, comm_contents, comm_update_date, 
+    comm_update_id, comm_delete
+        
+    </sql>
+    
+<!--     <resultMap id="boardResult" type="boardDTO"> -->
+
+<!--         <result column="board_num" property="boardNum" /> -->
+
+<!--         <result column="board_type" property="boardType" /> -->
+
+<!--         <result column="board_title" property="boardTitle" /> -->
+
+<!--         <result column="board_content" property="boardContent" />  -->
+        
+<!--         <result column="mem_id" property="boardWriter" /> -->
+        
+<!--         <result column="mem_nick" property="boardWriterNick" /> -->
+
+<!--         <result column="board_date" property="boardDate" /> -->
+
+<!--         <result column="board_update_id" property="boardUpdateId" /> -->
+
+<!--         <result column="board_update_date" property="boardUpdateDate" />  -->
+        
+<!--         <result column="board_hit" property="boardHit" />  -->
+        
+<!--         <result column="board_delete" property="boardDelete" />  -->
+
+<!--     </resultMap> -->
+
+
+    <insert id="insertBoard" parameterType="BoardDTO"> 
+        
+    INSERT INTO board_table (
+            <include refid="BoardColumns" />
+    )VALUES 
+    ('B_' || sequ_board_num.nextval,
+    #{boardType},
+    #{boardTitle},
+    #{boardContent},
+    #{boardWriter},
+    sysdate,
+    NULL,
+    NULL,
+    #{boardHit},
+    'N')
+    
+    </insert>
+    
+     <select id="selectBoardTotalCount" parameterType="BoardDTO" resultType="int">
+        SELECT
+            COUNT(*)
+        FROM
+            board_table
+        WHERE
+            board_delete = 'N'
+        AND 
+            board_type = #{boardType}
+    </select>
+    
+    <select id="selectBoardList" parameterType="BoardDTO" resultType="BoardDTO"> <!-- 자유게시판은 댓글 갯수도 갖고 와야함 -->
+        
+        SELECT
+             rownum rno, d.*
+        FROM
+            (SELECT count(a.board_num) as comm_count, b.board_num, b.board_title,  b.mem_id, b.board_date, c.mem_nick, b.board_type
+			FROM 
+			     comment_view a 
+			RIGHT OUTER JOIN board_table b ON a.board_num = b.board_num 
+			LEFT OUTER JOIN member_table c ON c.mem_id = b.mem_id
+			WHERE b.board_delete = 'N' AND b.board_type = #{boardType}
+			GROUP BY b.board_num, b.board_title, b.board_content, b.board_date, b.mem_id, b.board_delete,
+			 c.mem_nick, b.board_type
+			ORDER BY  board_date) d
+			<!--         WHERE  -->
+<!--            rno between 1 and 10  -->
+		ORDER BY rno desc
+
+    </select>
+    
+    <select id="selectBoardDetail" parameterType="BoardDTO" resultType="BoardDTO"> 
+        
+        SELECT
+           b.board_num, b.board_title, b.mem_id, b.board_date, c.mem_nick, b.board_type, b.board_content,  b.board_update_date, a.comm_num, a.comm_contents 
+        FROM 
+             board_table b 
+        LEFT OUTER JOIN  member_table c ON c.mem_id= b.mem_id 
+        LEFT OUTER JOIN comment_table a ON a.board_num = b.board_num
+		WHERE b.board_delete = 'N' 
+			 AND board_type = #{boardType} 
+			 AND (a.comm_delete = 'N' OR a.comm_delete is null)
+			 AND b.board_num = #{boardNum} 
+		ORDER BY a.comm_date
+
+    </select>
+    
+    <update id="updateBoard" parameterType="BoardDTO"> 
+        
+    UPDATE 
+        board_table 
+    SET 
+	    board_title = #{boardTitle},
+	    board_content = #{boardContent},
+	    board_update_id = #{boardUpdateId},
+	    board_update_date = sysdate
+    WHERE
+        mem_id = #{boardUpdateId}
+    AND
+        board_num = #{boardNum}
+    
+    </update>
+    
+    <update id="deleteBoard" parameterType="BoardDTO"> 
+        
+    UPDATE
+        board_table 
+    SET
+        board_delete='Y'
+    WHERE
+        <if test = 'boardUpdateId == "admin" and boardUpdateId != memId'> <!-- 현재 로그인 계정이 관리자이면 글 작성자의 iD를 갖고 와서 넣어줌  -->
+             (
+         </if>
+            mem_id = #{boardUpdateId} <!-- 글작성자가 현재 로그인 계정이면서 BOARD_NUM이 OO인 것을 지움#{boardUpdateId}  -->
+         <if test = 'boardUpdateId == "admin" and boardUpdateId != memId'> <!-- 현재 로그인 계정이 관리자이면 글 작성자의 iD를 갖고 와서 넣어줌  -->
+             OR mem_id = #{memId})
+         </if>
+     AND 
+        board_num = #{boardNum}
+    
+    </update>
+    
+    <update id="plusBoardHit" parameterType="BoardDTO">
+        update board_table set board_hit  = board_hit +1 where board_num = #{boardNum}
+   
+   </update>
+    
+    <select id="searchBoard" parameterType="BoardDTO" resultType="BoardDTO">
+	    select rownum rno, A.board_num, A.board_type ,A.board_title, A.board_content, A.board_hit, B.mem_id, B.mem_nick, A.board_date 
+	      from board_table A
+	            left outer join member_table B on A.mem_id = B.mem_id
+	             where A.board_title like '%'||#{boardSearch}||'%'  
+	                or A.board_content like '%'||#{boardSearch}||'%' 
+	                or B.mem_nick like '%'||#{boardSearch}||'%'
+	                    and A.board_type = #{boardType}
+	   order by rownum asc
+    
+    </select>
+    
+
+    
+
+</mapper>

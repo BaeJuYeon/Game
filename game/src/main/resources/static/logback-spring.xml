@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="true">
+
+    <!-- Appenders -->
+    
+    <!-- appender : 전달받은 로그를 어디에 출력할지 결정합니다. (콘솔 출력, 파일 저장, 데이터베이스 저장 등) -->
+    <!-- 아래는 appender 종류? 중 자주 사용하는 것 -->
+    <!-- ConsoleAppender:콘솔에 로그를 출력 -->
+    <!-- RollingFileAppender : 여러 개의 파일을 순화하며 로그를 저장 -->
+    
+    <!-- encoder : appender에 포함되어 출력할 로그의 형식을 지정합니다. -->
+    
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <Pattern>%d %5p [%c] %m%n</Pattern>
+        </encoder>
+    </appender>
+
+    <appender name="console-infolog" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <Pattern>%d %5p %m%n</Pattern>
+        </encoder>
+    </appender>
+
+    <!-- Logger -->
+    <logger name="com.board" level="DEBUG" appender-ref="console" />
+    <logger name="jdbc.sqlonly" level="INFO" appender-ref="console-infolog" />
+    <logger name="jdbc.resultsettable" level="INFO" appender-ref="console-infolog" />
+    <!-- Root Logger -->
+    <root level="off">
+        <appender-ref ref="console" />
+    </root>
+</configuration>

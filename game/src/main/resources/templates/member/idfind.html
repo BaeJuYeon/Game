@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="../js/idfind.js"></script>
+<style>
+    body {
+        background: rgb(94,94,94);
+    }   
+    section.id_find {
+        width:420px;
+        margin:auto;
+        height:1000px;
+        margin-top:100px;
+        border:1px solid red;
+    }
+    ul {
+        list-style-type:none;
+        font-size:12pt;
+        /*border:1px solid blue;*/
+        margin-left:30px;
+        margin:0;
+        padding:0;
+    }
+    label {
+        display:inline-block;
+        text-align:center;
+        border-radius:5px;  
+        margin-right:10px;
+        margin-bottom:0;
+        font-weight:bold;
+        font-size:14px;
+        color:white;
+    }
+    li  { 
+        clear:left; 
+        /*border:1px solid red;*/
+        overflow:hidden;
+    }   
+    .input1, .email {
+        margin-bottom: 15px;
+    }
+    h3 {
+        color:white;
+        font-size:14px;
+        margin-left:-18px;
+    }
+    .input1 {
+        margin-bottom: 15px;
+        border-radius:5px;
+        border:1px solid lightgray;
+        width:250px;
+        padding:13px;
+        padding-left:15px;
+        font-size:14px;
+    }
+    .email {
+        width:105px;
+        margin-bottom: 15px;
+        border-radius:5px;
+        border:1px solid lightgray;
+        padding:10px;
+        padding-left:20px;
+    }
+     .email2 {
+        width:130px;
+        margin-bottom: 15px;
+        border-radius:5px;
+        border:1px solid lightgray;
+        padding:10px;
+        padding-left:20px;
+        font-size:14px;
+    }
+    .btn_ok {
+        width:283px;
+        color:white;
+        background:black;
+        border-radius:5px;
+        padding:10px 15px;
+        font-size:13px;
+        margin-top:20px;
+        border: 1px solid black;
+        cursor:pointer;
+    }
+    img {
+    margin-left:100px;
+    
+   }
+   #namemsg, #emailmsg {
+    font-size:5px;
+    font-weight:bold;
+    margin-top:-5px;
+   }
+</style>
+</head>
+<body>
+ <section class="id_find">
+    <img src="../image/로고.PNG">
+    <h3>회원가입 시 입력한 이름과 이메일을 입력해주세요.</h3>
+    <form name="idfindForm" th:action="@{/member/idfind}" th:object="${member}" method="post" onsubmit="return idfindCheck()">
+     <th:block layout:fragment="content">
+      <ul>
+             <li>
+                <label>*이름</label>
+             </li>
+             <li>
+                 <input type="text" name="memName" class="input1" id="name" onblur="textCheck_name(this)" autocomplete="off" >
+                 <div id="namemsg"></div>
+             </li>
+             <li>
+                <label>*이메일</label>
+             </li>
+             <li>
+                <input type="text" name="email1" class="email" id="email1" onblur="textCheck_email(this)" autocomplete="off"> 
+                <input type="text" name="email2" class="email" id="email2" onblur="textCheck_email(this)" autocomplete="off">
+                <select class="email2" id="email3" onchange="emailCheck()">
+                   <option value="self">직접입력</option>
+                   <option value="naver.com">네이버</option>
+                   <option value="gmail.com">구글</option>
+                   <option value="daum.net">다음</option>
+                </select>
+                <input type="hidden" name="memEmail" id="email" value = "">
+                <div id="emailmsg"></div>
+             </li>
+             <li>
+                <button type="submit" class="btn_ok" onclick="">확인</button> <!--  onclick="idfindCheck()" -->
+             </li>
+      </ul>
+     
+     
+      </th:block>
+      </form>
+ </section>
+</body>
+
+
+ <th:block layout:fragment="script">
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+
+            function idFind() {
+
+                
+                
+               
+                		
+                		/*
+                		confirm(idx + "번 게시글을 삭제할까요?")) {
+                    var uri = null;
+                    var html = "";
+
+                    html += '<form name="dataForm" action="'+uri+'" method="post">';
+                        html += '<input type="hidden" name="idx" value="'+idx+'" />';
+                    html += '</form>';
+                    
+                    
+                    $("body").append(html);
+                    document.dataForm.submit();
+                
+                }
+                */
+                
+            }
+            /*[- end of function -]*/
+
+            /*]]>*/
+        </script>
+    </th:block>
+
+
+
+
+
+
+
+</html>

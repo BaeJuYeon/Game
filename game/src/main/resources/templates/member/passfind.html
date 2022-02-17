@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="../js/passfind.js"></script>
+<script src="https://code.jquery.com/jquery-latest.min.js"></script>
+<style>
+     body {
+        background: rgb(94,94,94);
+    } 
+    section.pass_find {
+        width:420px;
+        margin:auto;
+        height:1000px;
+        margin-top:100px;
+        border:1px solid red;
+    }
+     ul {
+        list-style-type:none;
+        font-size:12pt;
+        /*border:1px solid blue;*/
+        margin-left:30px;
+        margin:0;
+        padding:0;
+    }
+  label {
+        display:inline-block;
+        text-align:center;
+        border-radius:5px;  
+        margin-right:10px;
+        margin-bottom:0;
+        font-weight:bold;
+        font-size:14px;
+        color:white;
+    }
+    li  { 
+        clear:left; 
+        /*border:1px solid red;*/
+        overflow:hidden;
+    }   
+    .input1, .number {
+        margin-bottom: 15px;
+    }
+    h3 {
+        color:white;
+        font-size:14px;
+        margin-left:-18px;
+    }
+     .input1 {
+        margin-bottom: 15px;
+        border-radius:5px;
+        border:1px solid lightgray;
+        width:250px;
+        padding:13px;
+        padding-left:15px;
+        font-size:14px;
+    }
+    .email {
+        width:105px;
+        margin-bottom: 15px;
+        border-radius:5px;
+        border:1px solid lightgray;
+        padding:10px;
+        padding-left:20px;
+    }
+    .code {
+        width:175px;
+        text-align:left;
+        margin-bottom: 15px;
+        border-radius:5px;
+        border:1px solid lightgray;
+        padding:10px;
+        box-sizing:border-box;
+    }
+     .email2 {
+        width:130px;
+        margin-bottom: 15px;
+        border-radius:5px;
+        border:1px solid lightgray;
+        padding:10px;
+        padding-left:20px;
+        font-size:14px;
+    }
+      .btn_check {
+        color:white;
+        background:black;
+        border-radius:5px;
+        padding:9px 10px;
+        font-size:14px;
+        border: 1px solid black;
+        cursor:pointer;
+    }
+      .btn_ok {
+        width:283px;
+        color:white;
+        background:black;
+        border-radius:5px;
+        padding:10px 15px;
+        font-size:13px;
+        margin-top:20px;
+        border: 1px solid black;
+        cursor:pointer;
+    }
+    img {
+    margin-left:80px;
+    
+   }
+   .number {
+        margin-bottom: 15px;
+        border-radius:5px;
+        border:1px solid lightgray;
+        width:252px;
+        padding:13px;
+        padding-left:15px;
+        font-size:14px;
+    }
+    #idmsg, #emailmsg {
+    font-size:5px;
+    font-weight:bold;
+    margin-top:-5px;
+   }
+</style>
+</head>
+<body>
+ <section class="pass_find">
+    <img src="../image/로고.PNG">
+    <h3>회원가입 시 입력한 아이디와 이메일을 입력해주세요.</h3>
+    <form name="passfindForm" th:action="@{/member/passfind}" th:object="${member}" method="post" onsubmit="return passfindCheck()">
+     <th:block layout:fragment="content">
+      <ul>
+             <li>
+                <label>*아이디</label>
+             </li>
+             <li>
+                 <input type="text" name="memId" class="input1" id="id" onblur="textCheck_id(this)" onfocus ="idchecksave(this)"
+                autocomplete="off">
+                 <div id="idmsg"></div>
+             </li>
+             <li>
+                <label>*이메일</label>
+             </li>
+             <li>
+                <input type="text" class="email" id="email1" onchange="textCheck_email(this)" autocomplete="off"> 
+                <input type="text" class="email" id="email2" onchange="textCheck_email(this)" autocomplete="off">
+                <select class="email2" id="email3" onchange="emailCheck()">
+                   <option value="self">직접입력</option>
+                   <option value="naver.com">네이버</option>
+                   <option value="gmail.com">구글</option>
+                   <option value="daum.net">다음</option>
+                </select>
+                 <input type="hidden" name="memEmail" id="email" value = "">
+                 <button type="button" class="btn_check" onclick="sendEmailCode()">인증번호 받기</button>
+             <li>
+                <input type="text" name="code" class="code" id="code" placeholder="인증번호를 입력해주세요" onchange="emailCodeCheck()" autocomplete="off">
+                <div id="emailmsg"></div>
+             </li>
+             <li>
+                <button type="submit" class="btn_ok">확인</button>
+             </li>
+             <li>
+                <input type = "hidden" name="emailcodecheck" id = "emailcodecheck" value = "N">
+             </li>
+      </ul>
+      </th:block>
+      </form>
+ </section>
+</body>
+<script>
+    // 이메일 인증코드 전송
+    function sendEmailCode() {
+        let email = $("#email1").val() + "@" + $("#email2").val();
+        $.ajax({
+            url : '/member/sendEmail',
+            type : 'post',
+            data:{memEmail:email},
+            success : function(data) {
+                
+            }, error : function() {
+                    console.log("실패");
+                }
+        });
+    };
+    
+ // 입력된 이메일 인증코드 유효성검사
+    function emailCodeCheck() {
+        let code = $("#code").val();
+        
+        $.ajax({
+            url : '/member/verifyCode',
+            type : 'post',
+            data:{code : code},
+            success : function(data) {
+                console.log("1 = 일치 / 0 = 불일치 : "+ data);                          
+                
+                if (data == 1) {
+                        // 1 : 인증코드 일치 시
+                        $("#emailmsg").text("");
+                        $("#emailmsg").css("color","red");
+                        $("#emailcodecheck").val("Y");
+                        console.log(data);
+                } else {
+                        
+                    if($("#code").val() == ""){
+                        $("#emailmsg").text("인증코드를 입력해주세요");
+                        $("#emailmsg").css("color","red");
+                        $("#emailcodecheck").val("N");
+                        console.log(data);
+                    }else {
+                        $("#emailmsg").text("인증코드가 일치하지 않습니다");
+                        $("#emailmsg").css("color","red");
+                        $("#emailcheck").val("N");
+                        console.log(data);
+                    }
+                        
+                }
+                
+            }, error : function() {
+                    console.log("실패");
+                }
+        });
+    }
+</script>
+</html>

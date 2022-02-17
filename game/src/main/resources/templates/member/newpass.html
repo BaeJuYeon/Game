@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="../js/newpass.js"></script>
+<style>
+    body {
+        background: rgb(94,94,94);
+    }
+    section.newpass {
+        width:280px;
+        margin:auto;
+        height:1000px;
+         margin-top:100px;
+        border:1px solid red;
+    }
+     ul {
+        list-style-type:none;
+        font-size:12pt;
+        /*border:1px solid blue;*/
+        margin-left:30px;
+        margin:0;
+        padding:0;
+    }
+    label {
+        display:inline-block;
+        text-align:center;
+        border-radius:5px;  
+        margin-right:10px;
+        margin-bottom:0;
+        font-weight:bold;
+        font-size:14px;
+        color:white;
+    }
+    li  { 
+        clear:left; 
+        /*border:1px solid red;*/
+        overflow:hidden;
+    }   
+    .input1 {
+        margin-bottom: 15px;
+    }
+    h3 {
+        color:white;
+        font-size:14px;
+        margin-left:25px;
+    }
+     .input1 {
+        margin-bottom: 15px;
+        border-radius:5px;
+        border:1px solid lightgray;
+        width:250px;
+        padding:13px;
+        padding-left:15px;
+        font-size:14px;
+    }
+    
+     .btn_ok, .btn_reset {
+        color:white;
+        background:black;
+        border-radius:5px;
+        padding:9px 25px;
+        font-size:14px;
+        border: 1px solid black;
+        margin-left:35px;
+        margin-top:20px;
+        cursor:pointer;
+        
+    } 
+    img {
+    margin-left:90px;
+    
+   }
+   #passmsg, #cpassmsg {
+    font-size:5px;
+    font-weight:bold;
+    margin-top:-5px;
+   }
+</style>
+</head>
+<body>
+<section class="newpass">
+    <img src="../image/로고.PNG">
+    <h3>새로운 비밀번호를 입력해주세요.</h3>
+    <form name="newpassForm" th:action="@{/member/newpass}" th:object="${member}" method="post" onsubmit="return newpassCheck()">
+     <th:block layout:fragment="content">
+      <ul>
+             <li>
+                <label>*신규 비밀번호</label>
+             </li>
+             <li>
+                 <input type="password" name="memPass" class="input1" id="pass" placeholder="8~16자의 영문,숫자,특수문자 조합" onblur="textCheck_pass(this)"
+                autocomplete="off">
+                <div id="passmsg"></div>
+             </li>
+             <li>
+                <label>*신규 비밀번호 재확인</label>
+             </li>
+             <li>
+                <input type="password" name="cpass" class="input1" id="cpass" onblur="cpassCheck()" autocomplete="off">
+                <div id="cpassmsg"></div>
+             </li>
+               
+             <li>
+                <input type = "hidden" name = "memId" th:value = "*{memId}">
+             </li>
+             
+             <li>
+                <button type="submit" class="btn_ok">등록</button> <!--  onclick="idfindCheck()" -->
+                <button type="reset" class="btn_reset" onclick="">취소</button> <!--  onclick="idfindCheck()" -->
+             </li>
+      </ul>
+     
+     
+      </th:block>
+      </form>
+ </section>
+</body>
+</html>
